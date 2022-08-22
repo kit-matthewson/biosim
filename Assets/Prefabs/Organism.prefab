@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4987040011516263497}
   - component: {fileID: 4987040011516263494}
   - component: {fileID: 4987040011516263495}
-  - component: {fileID: 4987040011516263496}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -84,20 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &4987040011516263496
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4987040011516263498}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4987040012113323261
 GameObject:
   m_ObjectHideFlags: 0
@@ -197,4 +182,4 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 2

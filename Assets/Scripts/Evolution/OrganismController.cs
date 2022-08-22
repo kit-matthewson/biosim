@@ -14,9 +14,8 @@ public class OrganismController : MonoBehaviour {
     public void Initialise(Organism organism) {
         SetStats(organism);
 
-        gameObject.transform.SetPositionAndRotation(new Vector3((float)(organism.Fitness * 100), 0, (float)(organism.Fitness * 100)) + (Random.insideUnitSphere * 10), Quaternion.identity);
-        // gameObject.transform.SetPositionAndRotation(RandPos(), Quaternion.identity);
-        // agent.SetDestination(RandPos());
+        gameObject.transform.SetPositionAndRotation(RandPos(), Quaternion.identity);
+        agent.SetDestination(RandPos());
     }
 
     public void SetStats(Organism organism) {

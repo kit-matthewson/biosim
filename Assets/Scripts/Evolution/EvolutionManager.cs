@@ -1,26 +1,45 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EvolutionManager : MonoBehaviour {
     public GameObject organismObject;
+    public Transform organismParent;
 
     public int initialPopSize = 100;
     public int gensPerStep = 10;
     public float genLength = 5;
 
-    public int minOffspring = 3;
+    public int minOffspring = 2;
     public int maxOffspring = 5;
 
     public double mutationStrength = 0.01;
 
+    public static string rootFolder = "output\\csv";
+    public FileHandler fitnessCSV = new(rootFolder + "fitness.csv");
+
+    public string filesPath;
+    public float bucketSize;
+    public float bucketRange;
+
     private List<Organism> organisms;
-    private List<GameObject> organismObjects = new();
+    private readonly List<GameObject> organism_objects = new();
 
     private float last_generation;
+
+    private int generation = 0;
 
     private void Awake() {
         InitialisePopulation();
         last_generation = -genLength;
+
+        fitnessCSV.Write("gen,");
+        for (double i = -bucketRange; i <= bucketRange; i += bucketSize) {
+            fitnessCSV.Write(Math.Round(i * 100) / 100 + ",");
+        }
+        fitnessCSV.Write("\n");
     }
 
     private void Update() {
@@ -29,10 +48,37 @@ public class EvolutionManager : MonoBehaviour {
             
             for (int i = 0; i < gensPerStep; i++) {
                 organisms = GetNextGeneration(organisms);
+                generation++;
             }
+
+            UpdateCSVs();
 
             last_generation = Time.time;
         }
+    }
+
+    private void UpdateCSVs() {
+        int[] buckets = new int[(int)(4 * bucketRange / bucketSize)];
+
+        StringBuilder line = new(buckets.Length * 2); // Use SB to reduce IO operations
+
+        line.Append(generation + ",");
+        foreach (Organism organism in organisms) {
+            int bucket = Mathf.FloorToInt((float)((organism.Fitness + bucketRange) / (bucketRange * 2) * buckets.Length)); // Interpolate fitness into f-bucket
+            try { 
+                buckets[bucket] = buckets[bucket] + 1;
+            } catch (IndexOutOfRangeException e) {
+                Debug.LogError($"{bucket} {buckets.Length} {organism.Fitness}, {e}");
+            }
+        }
+
+        foreach (int f in buckets) {
+            line.Append(f + ",");
+        }
+
+        line.Append("\n");
+
+        fitnessCSV.Write(line.ToString());
     }
 
     private void InitialisePopulation() {
@@ -43,19 +89,19 @@ public class EvolutionManager : MonoBehaviour {
     }
 
     private void GenerateGameObjects() {
-        for (int i = 0; i < organismObjects.Count; i++) {
+        for (int i = 0; i < organism_objects.Count; i++) {
             if (i < organisms.Count) {
-                organismObjects[i].SetActive(true);
-                organismObjects[i].GetComponent<OrganismController>().Initialise(organisms[i]);
+                organism_objects[i].SetActive(true);
+                organism_objects[i].GetComponent<OrganismController>().Initialise(organisms[i]);
             } else {
-                organismObjects[i].SetActive(false);
+                organism_objects[i].SetActive(false);
             }
         }
 
-        for (int i = organismObjects.Count; i < organisms.Count; i++) {
-            GameObject new_org = Instantiate(organismObject);
+        for (int i = organism_objects.Count; i < organisms.Count; i++) {
+            GameObject new_org = Instantiate(organismObject, organismParent);
             new_org.GetComponent<OrganismController>().Initialise(organisms[i]);
-            organismObjects.Add(new_org);
+            organism_objects.Add(new_org);
         }
     }
 
