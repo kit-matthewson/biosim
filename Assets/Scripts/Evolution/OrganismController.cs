@@ -28,6 +28,12 @@ public class OrganismController : MonoBehaviour {
         agent.speed = (float)((organism.AttributeValue("Agility") * organism.AttributeValue("Endurance") * 20) + 1);
     }
 
+    private void Update() {
+        if (Random.value < 0.05) {
+            agent.SetDestination(RandPos());
+        }
+    }
+
     public Vector3 RandPos() {
         int width = 100;
         return new Vector3(Random.Range(-width, width), 0, Random.Range(-width, width));

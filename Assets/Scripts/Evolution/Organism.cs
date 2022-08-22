@@ -1,6 +1,6 @@
 using System;
-using UnityEngine;
 
+[Serializable]
 public class Organism {
     public static readonly Attribute[] attributes = {
         new("Strength",                0.90,  0.70),
@@ -68,6 +68,7 @@ public class Organism {
     }
 }
 
+[Serializable]
 public struct Attribute {
     public readonly string name;
     public readonly double benefitWeight;

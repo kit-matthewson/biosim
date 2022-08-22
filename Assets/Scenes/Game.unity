@@ -464,7 +464,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1480961311}
   - component: {fileID: 1480961310}
-  - component: {fileID: 1480961309}
   m_Layer: 0
   m_Name: Evolution Manager
   m_TagString: Untagged
@@ -472,18 +471,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1480961309
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1480961308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a45db104db082b488da4839ce57b552, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1480961310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -496,18 +483,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1635d5916801a874ab59030886a65410, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  config: {fileID: 11400000, guid: b006bfdae3a00e04b9a0252c2c2df24a, type: 2}
+  state: {fileID: 0}
   organismObject: {fileID: 4987040012113323261, guid: aba750e2b81e8d343bdaac5e7e65eace,
     type: 3}
-  organismParent: {fileID: 1746835482}
-  initialPopSize: 500
   gensPerStep: 1
+  updateCSV: 10
   genLength: 10
-  minOffspring: 1
-  maxOffspring: 10
-  mutationStrength: 0.02
-  filesPath: output
-  bucketSize: 0.1
-  bucketRange: 1
 --- !u!4 &1480961311
 Transform:
   m_ObjectHideFlags: 0
