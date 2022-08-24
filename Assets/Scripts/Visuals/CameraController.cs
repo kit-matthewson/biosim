@@ -31,8 +31,7 @@ public class CameraController : MonoBehaviour {
         movement += transform.InverseTransformDirection(Vector3.up * verticalMovement);
 
         transform.Translate(moveSpeed * Time.deltaTime * movement);
-        // annoying but z should always be 0 (tried world space) confusing should be better way
-        transform.Rotate(lookSpeed * Time.deltaTime * new Vector3(mouseDelta.y, mouseDelta.x, 0), Space.Self);
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
+        transform.Rotate(lookSpeed * Time.deltaTime * new Vector3(mouseDelta.y, mouseDelta.x, 0));
+        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0); // This shouldn't be needed, but is ??
     }
 }
