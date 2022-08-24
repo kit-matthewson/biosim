@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,20 +6,25 @@ public class EvolutionManager : MonoBehaviour {
 
     public EvolutionConfig config;
     [SerializeField] private SimulationState state;
+    public SimulationState State {
+        get {
+            return state;
+        }
+    }
 
     [Header("Simulation Config")] // Evolution config deals with the actual evolution paramaters. Simulation config only affects how this is shown.
     public GameObject organismObject;
     public int gensPerStep = 10;
     public int updateCSV = 10;
     public float genLength = 5;
-    
+
     private readonly List<GameObject> organism_objects = new();
 
     private float last_generation;
 
+    // Use Awake so CSVs can be made in Start
     private void Awake() {
-        state = (SimulationState)ScriptableObject.CreateInstance(typeof(SimulationState)); // Could require SO that is assumed zeroed instead
-
+        state = (SimulationState)ScriptableObject.CreateInstance(typeof(SimulationState)); // Could require SO that is assumed zeroed instead. Would allow for saving state?
         InitialisePopulation();
         last_generation = -genLength;
     }
@@ -29,7 +32,7 @@ public class EvolutionManager : MonoBehaviour {
     private void Update() {
         if (Time.time - last_generation >= genLength) {
             GenerateGameObjects();
-            
+
             for (int i = 0; i < gensPerStep; i++) {
                 state.organisms = GetNextGeneration(state.organisms);
                 state.generation++;
