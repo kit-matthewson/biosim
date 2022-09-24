@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using Random = System.Random;
 
 public class EvolutionManager : MonoBehaviour {
 
@@ -17,10 +19,16 @@ public class EvolutionManager : MonoBehaviour {
     public int gensPerStep = 10;
     public int updateCSV = 10;
     public float genLength = 5;
+    public int genQueueLength = 10;
 
     private readonly List<GameObject> organism_objects = new();
 
     private float last_generation;
+
+    private readonly Queue<List<Organism>> generations = new();
+    private Thread generationThread;
+
+    private readonly Random rnd = new();
 
     // Use Awake so CSVs can be made in Start
     private void Awake() {
@@ -29,39 +37,54 @@ public class EvolutionManager : MonoBehaviour {
         last_generation = -genLength;
     }
 
+    private void Start() {
+        generations.Enqueue(state.current_gen);
+        generationThread = new Thread(DoGenerations);
+        generationThread.Start();
+    }
+
     private void Update() {
         if (Time.time - last_generation >= genLength) {
-            GenerateGameObjects();
-
             for (int i = 0; i < gensPerStep; i++) {
-                state.organisms = GetNextGeneration(state.organisms);
+                state.current_gen = generations.Dequeue();
                 state.generation++;
+                Debug.Log(generations.Count);
             }
+
+            GenerateGameObjects();
 
             last_generation = Time.time;
         }
     }
 
     private void InitialisePopulation() {
-        state.organisms = new List<Organism>(config.initialPopulationSize);
+        state.current_gen = new List<Organism>(config.initialPopulationSize);
         for (int i = 0; i < config.initialPopulationSize; i++) {
-            state.organisms.Add(new());
+            state.current_gen.Add(new());
+        }
+    }
+
+    private void DoGenerations() {
+        while (true) {
+            if (generations.Count <= genQueueLength && generations.Count > 0) {
+                generations.Enqueue(GetNextGeneration(generations.Last()));
+            }
         }
     }
 
     private void GenerateGameObjects() {
         for (int i = 0; i < organism_objects.Count; i++) {
-            if (i < state.organisms.Count) {
+            if (i < state.current_gen.Count) {
                 organism_objects[i].SetActive(true);
-                organism_objects[i].GetComponent<OrganismController>().Initialise(state.organisms[i]);
+                organism_objects[i].GetComponent<OrganismController>().Initialise(state.current_gen[i]);
             } else {
                 organism_objects[i].SetActive(false);
             }
         }
 
-        for (int i = organism_objects.Count; i < state.organisms.Count; i++) {
+        for (int i = organism_objects.Count; i < state.current_gen.Count; i++) {
             GameObject new_org = Instantiate(organismObject, gameObject.transform);
-            new_org.GetComponent<OrganismController>().Initialise(state.organisms[i]);
+            new_org.GetComponent<OrganismController>().Initialise(state.current_gen[i]);
             organism_objects.Add(new_org);
         }
     }
@@ -82,7 +105,7 @@ public class EvolutionManager : MonoBehaviour {
 
         foreach (Organism organism in organisms) {
             double normalised_fitness = (organism.Fitness - min_fit) / (max_fit - min_fit);
-            if (Random.value <= normalised_fitness) {
+            if (rnd.NextDouble() <= normalised_fitness) {
                 survivors.Add(organism);
             }
         }
@@ -115,7 +138,7 @@ public class EvolutionManager : MonoBehaviour {
     }
 
     private T PopRandom<T>(List<T> list) {
-        T item = list[Random.Range(0, list.Count)];
+        T item = list[rnd.Next(0, list.Count)];
         list.Remove(item);
         return item;
     }
