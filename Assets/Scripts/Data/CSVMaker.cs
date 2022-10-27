@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
@@ -7,11 +9,13 @@ using UnityEngine;
 public class CSVMaker : MonoBehaviour {
 
     public const string root = "output\\csv";
-    public float bucketSize; // Size of buckets for frequency distributions
-    public float bucketRounding;
+    public float bucketSize;
+    public int writeFrequency;
 
-    private FileHandler[] files;
+    private Dictionary<string, FileHandler> files = new();
     private SimulationState state;
+
+    private int last_write = -1;
 
     private void Start() {
         if (!Directory.Exists(root)) {
@@ -20,53 +24,59 @@ public class CSVMaker : MonoBehaviour {
 
         state = gameObject.GetComponent<EvolutionManager>().State;
 
-        files = new FileHandler[Organism.attributes.Length + 1];
-
-        files[0] = new FileHandler($"{root}\\Fitness.csv");
+        files["Fitness"] = new FileHandler($"{root}\\Fitness.csv");
 
         for (int i = 0; i < Organism.attributes.Length; i++) {
             string attribute_name = Organism.attributes[i].name;
-            files[i + 1] = new FileHandler($"{root}\\{attribute_name}.csv");
+            files[attribute_name] = new FileHandler($"{root}\\{attribute_name}.csv");
         }
 
-        StringBuilder sb = new();
-        for (double i = -1; i < 1 + bucketSize; i += bucketSize) {
-            // sb.Append(Mathf.Round((float)(i * (double)Mathf.Pow(10, bucketRounding))) / (double)Mathf.Pow(10, bucketRounding));
-            sb.Append(i.ToString("0.00"));
-            if (i < 1) {
-                sb.Append(",");
+        StringBuilder header_row = new("gen,");
+        for (int i = 0; i < 2 / bucketSize; i++) {
+            header_row.Append(i * bucketSize - 1);
+
+            if (i < (2 / bucketSize) - 1) {
+                header_row.Append(",");
             }
         }
-        sb.Append("\n");
 
-        string header_row = sb.ToString();
+        header_row.Append("\n");
 
-        for (int i = 0; i < files.Length; i++) {
-            files[i].Write(header_row);
+        foreach (string key in files.Keys) {
+            files[key].Write(header_row.ToString());
+        }
+    }
+
+    private void Update() {
+        if (state.generation != last_write && state.generation % writeFrequency == 0) {
+            UpdateCSVs();
+            last_write = state.generation;
         }
     }
 
     public void UpdateCSVs() {
-        //int[] buckets = new int[(int)(2 / bucketSize)];
+        for (int i = -1; i < Organism.attributes.Length; i++) {
+            int[] buckets = new int[(int)(2 / bucketSize)];
 
-        //StringBuilder line = new(buckets.Length * 2); // Use SB to reduce IO operations
+            StringBuilder line = new(buckets.Length * 2);
 
-        //line.Append(state.generation + ",");
-        //foreach (Organism organism in state.organisms) {
-        //    int bucket = Mathf.FloorToInt((float)((organism.Fitness + 1) / (buckets.Length / 2))); // Interpolate fitness into f-bucket
-        //    try {
-        //        buckets[bucket] = buckets[bucket] + 1;
-        //    } catch (IndexOutOfRangeException e) {
-        //        Debug.LogError($"{bucket} {buckets.Length} {organism.Fitness}, {e}");
-        //    }
-        //}
+            line.Append(state.generation + ",");
+            foreach (Organism organism in state.current_gen) {
+                double value = i == -1 ? organism.Fitness : organism.AttributeValues[i];
 
-        //foreach (int f in buckets) {
-        //    line.Append(f + ",");
-        //}
+                int bucket = Mathf.FloorToInt((float)((1 + value) / bucketSize));
+                bucket = Mathf.Clamp(bucket, 0, buckets.Length - 1);
 
-        //line.Append("\n");
+                buckets[bucket] += 1;
+            }
 
-        //fitnessCSV.Write(line.ToString());
+            foreach (int frequency in buckets) {
+                line.Append(frequency + ",");
+            }
+
+            line.Append("\n");
+
+            files[i == -1 ? "Fitness" : Organism.attributes[i].name].Write(line.ToString());
+        }
     }
 }

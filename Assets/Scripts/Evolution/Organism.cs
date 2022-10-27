@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public class Organism {
@@ -29,7 +30,7 @@ public class Organism {
         attributeValues = new double[attributes.Length];
 
         for (int i = 0; i < attributes.Length; i++) {
-            attributeValues[i] = RandomNormal.Random(0.4);
+            attributeValues[i] = Mathf.Clamp((float)RandomNormal.Random(0.4), -1, 1);
         }
     }
 

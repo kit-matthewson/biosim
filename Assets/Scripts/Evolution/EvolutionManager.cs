@@ -17,7 +17,6 @@ public class EvolutionManager : MonoBehaviour {
     [Header("Simulation Config")] // Evolution config deals with the actual evolution paramaters. Simulation config only affects how this is shown.
     public GameObject organismObject;
     public int gensPerStep = 10;
-    public int updateCSV = 10;
     public float genLength = 5;
     public int genQueueLength = 10;
 
@@ -48,7 +47,6 @@ public class EvolutionManager : MonoBehaviour {
             for (int i = 0; i < gensPerStep; i++) {
                 state.current_gen = generations.Dequeue();
                 state.generation++;
-                Debug.Log(generations.Count);
             }
 
             GenerateGameObjects();
@@ -148,7 +146,7 @@ public class EvolutionManager : MonoBehaviour {
 
         for (int i = 0; i < Organism.attributes.Length; i++) {
             double average = (a.AttributeValues[i] + b.AttributeValues[i]) / 2;
-            attribute_values[i] = average + RandomNormal.Random(config.mutationStrength);
+            attribute_values[i] = Mathf.Clamp((float)(average + RandomNormal.Random(config.mutationStrength)), -1, 1);
         }
 
         return new Organism(attribute_values);

@@ -563,8 +563,8 @@ MonoBehaviour:
   organismObject: {fileID: 4987040012113323261, guid: aba750e2b81e8d343bdaac5e7e65eace,
     type: 3}
   gensPerStep: 1
-  updateCSV: 10
-  genLength: 10
+  genLength: 1
+  genQueueLength: 10
 --- !u!4 &1480961311
 Transform:
   m_ObjectHideFlags: 0
@@ -593,4 +593,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bucketSize: 0.1
-  bucketRounding: 3
+  writeFrequency: 1

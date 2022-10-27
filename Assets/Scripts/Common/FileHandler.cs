@@ -36,5 +36,6 @@ public class FileHandler {
         }
 
         fs.Write(data, 0, data.Length);
+        fs.Close();
     }
 }

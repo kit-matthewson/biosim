@@ -15,4 +15,4 @@ MonoBehaviour:
   initialPopulationSize: 500
   minimumOffspring: 2
   maximumOffspring: 5
-  mutationStrength: 0.7
+  mutationStrength: 0.04
