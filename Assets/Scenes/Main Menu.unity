@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731713, g: 0.13414736, b: 0.12107852, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -644,9 +644,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Kit Matthewson
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 80819abea85963e40805289eb4e29afc, type: 2}
-  m_sharedMaterial: {fileID: 3902309812056686214, guid: 80819abea85963e40805289eb4e29afc,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -975,9 +974,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Evolution Simulator
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 80819abea85963e40805289eb4e29afc, type: 2}
-  m_sharedMaterial: {fileID: 3902309812056686214, guid: 80819abea85963e40805289eb4e29afc,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1296,7 +1294,7 @@ PrefabInstance:
     - target: {fileID: 3309705501551424819, guid: 5579fdafd03625f44925871009bbf4ad,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: Simulation
+      value: Simulation Setup
       objectReference: {fileID: 0}
     - target: {fileID: 3309705501551424819, guid: 5579fdafd03625f44925871009bbf4ad,
         type: 3}
