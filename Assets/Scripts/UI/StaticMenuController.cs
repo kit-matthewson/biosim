@@ -7,10 +7,10 @@ public class StaticMenuController : MonoBehaviour {
 
     private string last;
 
-    private void Start() {
+    private void Awake() {
         DontDestroyOnLoad(gameObject);
+        evolutionConfig = ScriptableObject.CreateInstance<EvolutionConfig>();
     }
-
     public void LoadScene(string name) {
         last = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(name);

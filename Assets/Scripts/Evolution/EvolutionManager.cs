@@ -1,16 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = System.Random;
 
 public class EvolutionManager : MonoBehaviour {
 
     public MenuController menuController;
-    public EvolutionConfig config;    
-
-    [SerializeField]
-    private SimulationState state;
 
     public SimulationState State {
         get {
@@ -18,11 +16,18 @@ public class EvolutionManager : MonoBehaviour {
         }
     }
 
+    [Header("UI")]
+    public Slider genProgress;
+    public TextMeshProUGUI genText;
+
     [Header("Simulation Config")] // Evolution config deals with the actual evolution paramaters. Simulation config only affects how this is shown.
     public GameObject organismObject;
     public int gensPerStep = 10;
     public float genLength = 5;
     public int genQueueLength = 10;
+
+    private EvolutionConfig config;
+    private SimulationState state;
 
     private readonly List<GameObject> organism_objects = new();
 
@@ -50,8 +55,10 @@ public class EvolutionManager : MonoBehaviour {
     }
 
     private void Update() {
-        if (Time.time - last_generation >= genLength && generations.Count() > 0) {
-            for (int i = 0; i < gensPerStep; i++) {
+        if (Time.time - last_generation >= genLength) {
+            genText.text = state.generation.ToString();
+
+            for (int i = 0; i < gensPerStep && generations.Count() > 0; i++) {
                 state.current_gen = generations.Dequeue();
                 state.generation++;
             }
@@ -60,6 +67,8 @@ public class EvolutionManager : MonoBehaviour {
 
             last_generation = Time.time;
         }
+
+        genProgress.value = (Time.time - last_generation) / genLength;
     }
 
     private void InitialisePopulation() {
