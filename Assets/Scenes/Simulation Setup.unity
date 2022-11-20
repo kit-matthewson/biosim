@@ -627,8 +627,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 10.03
-  m_fontSizeBase: 10.03
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -735,8 +735,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Affects how large the mutations offspring have can be. Technically the
-    standard distribution of a normal distribution.
+  m_text: Affects how large the mutations offspring have can be. Technically controls
+    the variance of a normal distribution.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -763,8 +763,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 10.03
-  m_fontSizeBase: 10.03
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1145,6 +1145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a68f7f26f1c392c4eb2e9e765399cc29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menuController: {fileID: 941990443}
   mutationSlider: {fileID: 1765584296}
   mutationText: {fileID: 359588310}
   popSizeSlider: {fileID: 5582247385983645913}
@@ -1190,6 +1191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b626a16ee2ea8546842e83e7074b8ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  evolutionConfig: {fileID: 0}
 --- !u!4 &1023313679
 Transform:
   m_ObjectHideFlags: 0
@@ -1630,6 +1632,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5582247385787570046, guid: 0678ff4d1adf8984ab3a53979d569a2b,
         type: 3}
+      propertyPath: m_fontStyle
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5582247385787570046, guid: 0678ff4d1adf8984ab3a53979d569a2b,
+        type: 3}
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1884,6 +1891,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1803604931}
     m_Modifications:
+    - target: {fileID: 5582247384528350172, guid: 0678ff4d1adf8984ab3a53979d569a2b,
+        type: 3}
+      propertyPath: m_fontSizeBase
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 5582247384704045928, guid: 0678ff4d1adf8984ab3a53979d569a2b,
         type: 3}
       propertyPath: m_AnchorMax.x

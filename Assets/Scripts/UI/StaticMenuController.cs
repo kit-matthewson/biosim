@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class StaticMenuController : MonoBehaviour {
 
+    public EvolutionConfig evolutionConfig;
+
     private string last;
 
     private void Start() {

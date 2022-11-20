@@ -3,10 +3,17 @@ using UnityEngine;
 
 public class MenuController : MonoBehaviour {
     public string staticObjectName = "Static";
-    
-    private StaticMenuController controller;
 
-    private void Start() {
+    private StaticMenuController controller;
+    public StaticMenuController StaticController {
+        get {
+            return controller;
+        }
+
+        set { }
+    }
+
+    private void Awake() {
         controller = GameObject.Find(staticObjectName).GetComponent<StaticMenuController>();
     }
 

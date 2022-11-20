@@ -627,12 +627,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1635d5916801a874ab59030886a65410, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: b006bfdae3a00e04b9a0252c2c2df24a, type: 2}
+  menuController: {fileID: 1653179095}
+  config: {fileID: 0}
   state: {fileID: 0}
   organismObject: {fileID: 4987040012113323261, guid: aba750e2b81e8d343bdaac5e7e65eace,
     type: 3}
-  gensPerStep: 1
-  genLength: 1
+  gensPerStep: 5
+  genLength: 10
   genQueueLength: 10
 --- !u!4 &1480961311
 Transform:
@@ -662,7 +663,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bucketSize: 0.1
-  writeFrequency: 1
+  writeFrequency: 5
 --- !u!114 &1480961313
 MonoBehaviour:
   m_ObjectHideFlags: 0

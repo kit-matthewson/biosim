@@ -6,8 +6,12 @@ using Random = System.Random;
 
 public class EvolutionManager : MonoBehaviour {
 
-    public EvolutionConfig config;
-    [SerializeField] private SimulationState state;
+    public MenuController menuController;
+    public EvolutionConfig config;    
+
+    [SerializeField]
+    private SimulationState state;
+
     public SimulationState State {
         get {
             return state;
@@ -31,19 +35,22 @@ public class EvolutionManager : MonoBehaviour {
 
     // Use Awake so CSVs can be made in Start
     private void Awake() {
-        state = (SimulationState)ScriptableObject.CreateInstance(typeof(SimulationState)); // Could require SO that is assumed zeroed instead. Would allow for saving state?
-        InitialisePopulation();
-        last_generation = -genLength;
+        state = ScriptableObject.CreateInstance<SimulationState>();
     }
 
     private void Start() {
+        config = menuController.StaticController.evolutionConfig;
+
+        InitialisePopulation();
+        last_generation = -genLength;
+
         generations.Enqueue(state.current_gen);
         generationThread = new Thread(DoGenerations);
         generationThread.Start();
     }
 
     private void Update() {
-        if (Time.time - last_generation >= genLength) {
+        if (Time.time - last_generation >= genLength && generations.Count() > 0) {
             for (int i = 0; i < gensPerStep; i++) {
                 state.current_gen = generations.Dequeue();
                 state.generation++;
