@@ -1,87 +1,95 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = System.Random;
 
 /// <summary>
-/// Runs the evolution simulation.
+///     Runs the evolution simulation.
 /// </summary>
-public class EvolutionManager : MonoBehaviour {
-
-    public MenuController menuController;
+public class EvolutionManager : MonoBehaviour
+{
+    public StaticMenuControllerHandle MenuControllerHandle;
 
     public SimulationState State { get; private set; }
 
     [Header("UI")]
     public Slider GenProgress;
+
     public TextMeshProUGUI GenText;
 
-    // Evolution config deals with the actual evolution paramaters. Simulation config only affects how this is shown.
+    // Evolution config deals with the actual evolution parameters. Simulation config only affects how this is shown.
     [Header("Simulation Config")]
     public GameObject OrganismObject;
+
     public int GensPerStep = 10;
     public float GenLength = 5;
     public int GenQueueLength = 10;
 
     private EvolutionConfig _config;
 
-    private readonly List<GameObject> _organism_objects = new();
+    private readonly List<GameObject> _organismObjects = new();
 
-    private float _last_generation;
+    private float _lastGeneration;
 
     private readonly Queue<List<Organism>> _generations = new();
     private Thread _generationThread;
 
-    private readonly Random rnd = new();
+    private readonly Random _rnd = new();
 
     // Use Awake so CSVs can be made in Start
+    [PublicAPI]
     private void Awake() {
         State = ScriptableObject.CreateInstance<SimulationState>();
     }
 
+    [PublicAPI]
     private void Start() {
-        _config = MenuController.StaticController.evolutionConfig;
+        _config = MenuControllerHandle.StaticController.evolutionConfig;
 
         InitialisePopulation();
-        _last_generation = -GenLength;
+        _lastGeneration = -GenLength;
 
         _generations.Enqueue(State.current_gen);
         _generationThread = new Thread(DoGenerations);
         _generationThread.Start();
     }
 
+    [PublicAPI]
     private void Update() {
-        if (Time.time - _last_generation >= GenLength) {
+        if (Time.time - _lastGeneration >= GenLength) {
             GenText.text = State.generation.ToString();
 
-            for (int i = 0; i < GensPerStep && _generations.Count() > 0; i++) {
+            for (int i = 0; i < GensPerStep && _generations.Any(); i++) {
                 State.current_gen = _generations.Dequeue();
                 State.generation++;
             }
 
             GenerateGameObjects();
 
-            _last_generation = Time.time;
+            _lastGeneration = Time.time;
         }
 
-        GenProgress.value = (Time.time - _last_generation) / GenLength;
+        GenProgress.value = (Time.time - _lastGeneration) / GenLength;
     }
 
     /// <summary>
-    /// Initialises the population based on the  <c>EvolutionConfig</c>.
+    ///     Initialises the population based on the <c>EvolutionConfig</c>.
     /// </summary>
     private void InitialisePopulation() {
         State.current_gen = new List<Organism>(_config.initialPopulationSize);
+
         for (int i = 0; i < _config.initialPopulationSize; i++) {
-            State.current_gen.Add(new());
+            State.current_gen.Add(new Organism());
         }
     }
 
+    // ReSharper disable once FunctionNeverReturns
     /// <summary>
-    /// Runs generations whenever the generation queue drops below <c>GenQueueLength</c>
+    ///     Runs generations whenever the generation queue drops below <c>GenQueueLength</c>
     /// </summary>
     private void DoGenerations() {
         while (true) {
@@ -92,47 +100,47 @@ public class EvolutionManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Efficiently creates gameobjects corresponding to the current generation. Deactivates unused objects.
+    ///     Efficiently creates GameObjects corresponding to the current generation. Deactivates unused objects.
     /// </summary>
     private void GenerateGameObjects() {
-        for (int i = 0; i < _organism_objects.Count; i++) {
+        for (int i = 0; i < _organismObjects.Count; i++) {
             if (i < State.current_gen.Count) {
-                _organism_objects[i].SetActive(true);
-                _organism_objects[i].GetComponent<OrganismController>().Initialise(State.current_gen[i]);
+                _organismObjects[i].SetActive(true);
+                _organismObjects[i].GetComponent<OrganismController>().Initialise(State.current_gen[i]);
             } else {
-                _organism_objects[i].SetActive(false);
+                _organismObjects[i].SetActive(false);
             }
         }
 
-        for (int i = _organism_objects.Count; i < State.current_gen.Count; i++) {
-            GameObject new_org = Instantiate(OrganismObject, gameObject.transform);
-            new_org.GetComponent<OrganismController>().Initialise(State.current_gen[i]);
-            _organism_objects.Add(new_org);
+        for (int i = _organismObjects.Count; i < State.current_gen.Count; i++) {
+            GameObject newOrg = Instantiate(OrganismObject, gameObject.transform);
+            newOrg.GetComponent<OrganismController>().Initialise(State.current_gen[i]);
+            _organismObjects.Add(newOrg);
         }
     }
 
     /// <summary>
-    /// Runs the generation algorithms on <c>organisms</c>.
+    ///     Runs the generation algorithms on <c>organisms</c>.
     /// </summary>
     /// <param name="organisms">Previous generation</param>
     /// <returns>Next generation</returns>
     private List<Organism> GetNextGeneration(List<Organism> organisms) {
         List<Organism> survivors = new(organisms.Count / 2);
 
-        double min_fit = 1, max_fit = -1;
-        foreach (Organism organism in organisms) {
-            double fitness = organism.Fitness;
+        double minFit = 1, maxFit = -1;
 
-            if (fitness > max_fit) {
-                max_fit = fitness;
-            } else if (fitness < min_fit) {
-                min_fit = fitness;
+        foreach (double fitness in organisms.Select(organism => organism.Fitness)) {
+            if (fitness > maxFit) {
+                maxFit = fitness;
+            } else if (fitness < minFit) {
+                minFit = fitness;
             }
         }
 
         foreach (Organism organism in organisms) {
-            double normalised_fitness = (organism.Fitness - min_fit) / (max_fit - min_fit);
-            if (rnd.NextDouble() <= normalised_fitness) {
+            double normalisedFitness = (organism.Fitness - minFit) / (maxFit - minFit);
+
+            if (_rnd.NextDouble() <= normalisedFitness) {
                 survivors.Add(organism);
             }
         }
@@ -141,52 +149,53 @@ public class EvolutionManager : MonoBehaviour {
             survivors.RemoveAt(survivors.Count - 1);
         }
 
-        List<Organism> next_generation = new(organisms.Count);
+        List<Organism> nextGeneration = new(organisms.Count);
 
-        while (survivors.Count > 0 && next_generation.Count < 1000) {
+        while (survivors.Count > 0 && nextGeneration.Count < 1000) {
             Organism a = PopRandom(survivors);
             Organism b = PopRandom(survivors);
 
             a.DoAgeing();
             b.DoAgeing();
 
-            next_generation.Add(a);
-            next_generation.Add(b);
+            nextGeneration.Add(a);
+            nextGeneration.Add(b);
 
-            int offspring = Mathf.CeilToInt((float)((a.Fitness + b.Fitness) * (_config.maximumOffspring - _config.minimumOffspring) / 2) + _config.minimumOffspring);
+            int offspring = Mathf.CeilToInt((float)((a.Fitness + b.Fitness) * (_config.maximumOffspring - _config.minimumOffspring) / 2) +
+                                            _config.minimumOffspring);
 
             for (int i = 0; i < offspring; i++) {
                 Organism c = Reproduce(a, b);
-                next_generation.Add(c);
+                nextGeneration.Add(c);
             }
         }
 
-        return next_generation;
+        return nextGeneration;
     }
-    
+
     /// <summary>
-    /// Pops a random item from a list.
+    ///     Pops a random item from a list.
     /// </summary>
     private T PopRandom<T>(List<T> list) {
-        T item = list[rnd.Next(0, list.Count)];
+        T item = list[_rnd.Next(0, list.Count)];
         list.Remove(item);
         return item;
     }
 
     /// <summary>
-    /// Calculates the offspring of two organisms.
+    ///     Calculates the offspring of two organisms.
     /// </summary>
     /// <param name="a">First organism</param>
     /// <param name="b">Second organism</param>
     /// <returns>Offspring</returns>
     private Organism Reproduce(Organism a, Organism b) {
-        double[] attribute_values = new double[Organism.attributes.Length];
+        double[] attributeValues = new double[Organism.attributes.Length];
 
         for (int i = 0; i < Organism.attributes.Length; i++) {
             double average = (a.AttributeValues[i] + b.AttributeValues[i]) / 2;
-            attribute_values[i] = Mathf.Clamp((float)(average + RandomNormal.Random(_config.mutationStrength)), -1, 1);
+            attributeValues[i] = Mathf.Clamp((float)(average + RandomNormal.Random(_config.mutationStrength)), -1, 1);
         }
 
-        return new Organism(attribute_values);
+        return new Organism(attributeValues);
     }
 }

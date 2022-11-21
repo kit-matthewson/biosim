@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class SimulationSetupController : MonoBehaviour {
 
 
-    public MenuController menuController;
+    public StaticMenuControllerHandle StaticMenuControllerHandle;
     public Slider mutationSlider;
     public TextMeshProUGUI mutationText;
     public Slider popSizeSlider;
@@ -25,7 +25,7 @@ public class SimulationSetupController : MonoBehaviour {
         mutationText.text = (Mathf.Round(Mathf.Lerp(0, 10, mutationSlider.value / mutationSlider.maxValue) * 10) / 10).ToString();
         popSizeText.text = popSizeSlider.value.ToString();
 
-        menuController.StaticController.evolutionConfig = config;
+        StaticMenuControllerHandle.StaticController.evolutionConfig = config;
     }
 
     public void Defaults() {
