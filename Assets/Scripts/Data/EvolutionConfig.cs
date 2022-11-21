@@ -1,9 +1,12 @@
 using UnityEngine;
 
+/// <summary>
+/// Stores configuration data on evolution parameters.
+/// </summary>
 [CreateAssetMenu(fileName = "Evolution Config", menuName = "ScriptableObject/EvolutionConfig")]
 public class EvolutionConfig : ScriptableObject {
-    public int initialPopulationSize = 500;
-    public int minimumOffspring = 2;
-    public int maximumOffspring = 5;
-    public double mutationStrength = 0.04;
+    public int InitialPopulationSize = 500;
+    public int MinimumOffspring = 2;
+    public int MaximumOffspring = 5;
+    public double MutationStrength = 0.04;
 }

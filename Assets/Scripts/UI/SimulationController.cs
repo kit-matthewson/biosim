@@ -1,5 +1,3 @@
 using UnityEngine;
 
-public class SimulationController: MonoBehaviour {
-    
-}
+public class SimulationController : MonoBehaviour { }

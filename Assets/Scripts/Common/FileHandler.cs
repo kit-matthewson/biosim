@@ -1,39 +1,41 @@
-using System;
 using System.IO;
 using System.Text;
 
+/// <summary>
+/// Provides a simple write-only interface to a file.
+/// </summary>
 public class FileHandler {
-    public readonly string filePath;
-    public readonly string fileName;
-    public readonly string fileType;
+    public readonly string FilePath;
+    public readonly string FileName;
 
-    private readonly UTF8Encoding encoder = new(true);
+    private readonly UTF8Encoding _encoder = new(true);
 
-    public FileHandler(string file_path) {
-        filePath = file_path;
-        string[] split = file_path.Split(".", 2);
+    public FileHandler(string filePath) {
+        FilePath = filePath;
+        string[] split = filePath.Split(".", 2);
 
-        fileName = split[0];
-        fileName = split[1];
+        FileName = split[0];
+        FileName = split[1];
 
-        //int i = 0;
-        //while (File.Exists(filePath)) {
-        //    filePath = $"{fileName}{i}.{fileType}";
-        //    i++;
-        //}
+        // int i = 0;
+        // while (File.Exists(filePath)) {
+        //     filePath = $"{fileName}{i}.{fileType}";
+        //     i++;
+        // }
 
-        File.Create(filePath).Close();
+        File.Create(FilePath).Close();
     }
 
+    /// <summary>
+    /// Writes some text to the file being handled.
+    /// </summary>
+    /// <param name="value">The string to write.</param>
+    /// <param name="append">Whether text should be appended, or the file overwritten with new data.</param>
     public void Write(string value, bool append = true) {
-        using FileStream fs = File.OpenWrite(filePath);
-        byte[] data = encoder.GetBytes(value);
+        using FileStream fs = File.OpenWrite(FilePath);
+        byte[] data = _encoder.GetBytes(value);
 
-        if (!append) {
-            fs.Seek(0, SeekOrigin.Begin);
-        } else {
-            fs.Seek(0, SeekOrigin.End);
-        }
+        fs.Seek(0, !append ? SeekOrigin.Begin : SeekOrigin.End);
 
         fs.Write(data, 0, data.Length);
         fs.Close();

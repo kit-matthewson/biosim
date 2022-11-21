@@ -1,37 +1,44 @@
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Handles camera movement from keyboard inputs.
+/// </summary>
 public class CameraController : MonoBehaviour {
+    public float MoveSpeed;
+    public float LookSpeed;
 
-    public float moveSpeed;
-    public float lookSpeed;
+    private Vector2 _horizontalMovement;
+    private float _verticalMovement;
+    private Vector2 _mouseDelta;
 
-    private Vector2 horizontalMovement = new();
-    private float verticalMovement = 0;
-    private Vector2 mouseDelta = new();
-
+    [PublicAPI]
     private void Start() {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
+    [PublicAPI]
+    private void Update() {
+        Vector3 movement = new(_horizontalMovement.x, 0, _horizontalMovement.y);
+        movement += transform.InverseTransformDirection(Vector3.up * _verticalMovement);
+
+        transform.Translate(MoveSpeed * Time.deltaTime * movement);
+        transform.Rotate(LookSpeed * Time.deltaTime * new Vector3(_mouseDelta.y, _mouseDelta.x, 0));
+        transform.rotation =
+            Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0); // This shouldn't be needed, but is ??
+    }
+
     public void OnHorizontalMovement(InputValue input) {
-        horizontalMovement = input.Get<Vector2>();
+        _horizontalMovement = input.Get<Vector2>();
     }
 
     public void OnVerticalMovement(InputValue input) {
-        verticalMovement = input.Get<float>();
+        _verticalMovement = input.Get<float>();
     }
 
     public void OnLook(InputValue input) {
-        mouseDelta = input.Get<Vector2>();
-    }
-    private void Update() {
-        Vector3 movement = new(horizontalMovement.x, 0, horizontalMovement.y);
-        movement += transform.InverseTransformDirection(Vector3.up * verticalMovement);
-
-        transform.Translate(moveSpeed * Time.deltaTime * movement);
-        transform.Rotate(lookSpeed * Time.deltaTime * new Vector3(mouseDelta.y, mouseDelta.x, 0));
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0); // This shouldn't be needed, but is ??
+        _mouseDelta = input.Get<Vector2>();
     }
 }

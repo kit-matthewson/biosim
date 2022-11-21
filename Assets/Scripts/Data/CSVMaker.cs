@@ -1,68 +1,72 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JetBrains.Annotations;
 using UnityEngine;
 
 [RequireComponent(typeof(EvolutionManager))]
-public class CSVMaker : MonoBehaviour {
+public class CsvMaker : MonoBehaviour {
+    public const string Root = "output\\csv";
+    public float BucketSize;
+    public int WriteFrequency;
 
-    public const string root = "output\\csv";
-    public float bucketSize;
-    public int writeFrequency;
+    private readonly Dictionary<string, FileHandler> _files = new();
+    private SimulationState _state;
 
-    private Dictionary<string, FileHandler> files = new();
-    private SimulationState state;
+    private int _lastWrite = -1;
 
-    private int last_write = -1;
-
+    [PublicAPI]
     private void Start() {
-        if (!Directory.Exists(root)) {
-            Directory.CreateDirectory(root);
+        if (!Directory.Exists(Root)) {
+            Directory.CreateDirectory(Root);
         }
 
-        state = gameObject.GetComponent<EvolutionManager>().State;
+        _state = gameObject.GetComponent<EvolutionManager>().State;
 
-        files["Fitness"] = new FileHandler($"{root}\\Fitness.csv");
+        _files["Fitness"] = new FileHandler($"{Root}\\Fitness.csv");
 
         for (int i = 0; i < Organism.Attributes.Length; i++) {
-            string attribute_name = Organism.Attributes[i].Name;
-            files[attribute_name] = new FileHandler($"{root}\\{attribute_name}.csv");
+            string attributeName = Organism.Attributes[i].Name;
+            _files[attributeName] = new FileHandler($"{Root}\\{attributeName}.csv");
         }
 
-        StringBuilder header_row = new("gen,");
-        for (int i = 0; i < 2 / bucketSize; i++) {
-            header_row.Append(i * bucketSize - 1);
+        StringBuilder headerRow = new("gen,");
 
-            if (i < (2 / bucketSize) - 1) {
-                header_row.Append(",");
+        for (int i = 0; i < 2 / BucketSize; i++) {
+            headerRow.Append(i * BucketSize - 1);
+
+            if (i < 2 / BucketSize - 1) {
+                headerRow.Append(",");
             }
         }
 
-        header_row.Append("\n");
+        headerRow.Append("\n");
 
-        foreach (string key in files.Keys) {
-            files[key].Write(header_row.ToString());
+        foreach (string key in _files.Keys) {
+            _files[key].Write(headerRow.ToString());
         }
     }
 
+    [PublicAPI]
     private void Update() {
-        if (state.generation != last_write && state.generation % writeFrequency == 0) {
-            UpdateCSVs();
-            last_write = state.generation;
-        }
+        if (_state.Generation == _lastWrite || _state.Generation % WriteFrequency != 0) return;
+
+        UpdateCsvs();
+        _lastWrite = _state.Generation;
     }
 
-    public void UpdateCSVs() {
+    public void UpdateCsvs() {
         for (int i = -1; i < Organism.Attributes.Length; i++) {
-            int[] buckets = new int[(int)(2 / bucketSize)];
+            int[] buckets = new int[(int)(2 / BucketSize)];
 
             StringBuilder line = new(buckets.Length * 2);
 
-            line.Append(state.generation + ",");
-            foreach (Organism organism in state.current_gen) {
+            line.Append(_state.Generation + ",");
+
+            foreach (Organism organism in _state.CurrentGen) {
                 double value = i == -1 ? organism.Fitness : organism.AttributeValues[i];
 
-                int bucket = Mathf.FloorToInt((float)((1 + value) / bucketSize));
+                int bucket = Mathf.FloorToInt((float)((1 + value) / BucketSize));
                 bucket = Mathf.Clamp(bucket, 0, buckets.Length - 1);
 
                 buckets[bucket] += 1;
@@ -74,7 +78,7 @@ public class CSVMaker : MonoBehaviour {
 
             line.Append("\n");
 
-            files[i == -1 ? "Fitness" : Organism.Attributes[i].Name].Write(line.ToString());
+            _files[i == -1 ? "Fitness" : Organism.Attributes[i].Name].Write(line.ToString());
         }
     }
 }

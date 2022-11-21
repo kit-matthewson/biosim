@@ -1,37 +1,44 @@
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Controls the SimulationSetup scene.
+/// </summary>
 public class SimulationSetupController : MonoBehaviour {
+    public StaticMenuControllerHandle MenuController;
+    public Slider MutationSlider;
+    public TextMeshProUGUI MutationText;
+    public Slider PopSizeSlider;
+    public TextMeshProUGUI PopSizeText;
 
+    private EvolutionConfig _config;
 
-    public StaticMenuControllerHandle StaticMenuControllerHandle;
-    public Slider mutationSlider;
-    public TextMeshProUGUI mutationText;
-    public Slider popSizeSlider;
-    public TextMeshProUGUI popSizeText;
-
-    EvolutionConfig config;
-
+    [PublicAPI]
     private void Start() {
         Defaults();
     }
 
+    [PublicAPI]
     private void Update() {
-        config.mutationStrength = mutationSlider.value;
-        config.initialPopulationSize = Mathf.FloorToInt(popSizeSlider.value);
+        _config.MutationStrength = MutationSlider.value;
+        _config.InitialPopulationSize = Mathf.FloorToInt(PopSizeSlider.value);
 
         // Set text to a value from 0-10 instead of small fractions
-        mutationText.text = (Mathf.Round(Mathf.Lerp(0, 10, mutationSlider.value / mutationSlider.maxValue) * 10) / 10).ToString();
-        popSizeText.text = popSizeSlider.value.ToString();
+        MutationText.text = (Mathf.Round(Mathf.Lerp(0, 10, MutationSlider.value / MutationSlider.maxValue) * 10) / 10).ToString();
+        PopSizeText.text = PopSizeSlider.value.ToString();
 
-        StaticMenuControllerHandle.StaticController.evolutionConfig = config;
+        MenuController.StaticController.EvolutionConfig = _config;
     }
 
+    /// <summary>
+    /// Reset values to defaults (overwrites with a new <c>EvolutionConfig</c>).
+    /// </summary>
     public void Defaults() {
-        config = ScriptableObject.CreateInstance<EvolutionConfig>();
-        
-        mutationSlider.value = (float)config.mutationStrength;
-        popSizeSlider.value = config.initialPopulationSize;
+        _config = ScriptableObject.CreateInstance<EvolutionConfig>();
+
+        MutationSlider.value = (float)_config.MutationStrength;
+        PopSizeSlider.value = _config.InitialPopulationSize;
     }
 }

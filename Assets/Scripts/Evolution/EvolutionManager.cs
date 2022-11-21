@@ -48,12 +48,12 @@ public class EvolutionManager : MonoBehaviour
 
     [PublicAPI]
     private void Start() {
-        _config = MenuControllerHandle.StaticController.evolutionConfig;
+        _config = MenuControllerHandle.StaticController.EvolutionConfig;
 
         InitialisePopulation();
         _lastGeneration = -GenLength;
 
-        _generations.Enqueue(State.current_gen);
+        _generations.Enqueue(State.CurrentGen);
         _generationThread = new Thread(DoGenerations);
         _generationThread.Start();
     }
@@ -61,11 +61,11 @@ public class EvolutionManager : MonoBehaviour
     [PublicAPI]
     private void Update() {
         if (Time.time - _lastGeneration >= GenLength) {
-            GenText.text = State.generation.ToString();
+            GenText.text = State.Generation.ToString();
 
             for (int i = 0; i < GensPerStep && _generations.Any(); i++) {
-                State.current_gen = _generations.Dequeue();
-                State.generation++;
+                State.CurrentGen = _generations.Dequeue();
+                State.Generation++;
             }
 
             GenerateGameObjects();
@@ -80,10 +80,10 @@ public class EvolutionManager : MonoBehaviour
     ///     Initialises the population based on the <c>EvolutionConfig</c>.
     /// </summary>
     private void InitialisePopulation() {
-        State.current_gen = new List<Organism>(_config.initialPopulationSize);
+        State.CurrentGen = new List<Organism>(_config.InitialPopulationSize);
 
-        for (int i = 0; i < _config.initialPopulationSize; i++) {
-            State.current_gen.Add(new Organism());
+        for (int i = 0; i < _config.InitialPopulationSize; i++) {
+            State.CurrentGen.Add(new Organism());
         }
     }
 
@@ -104,17 +104,17 @@ public class EvolutionManager : MonoBehaviour
     /// </summary>
     private void GenerateGameObjects() {
         for (int i = 0; i < _organismObjects.Count; i++) {
-            if (i < State.current_gen.Count) {
+            if (i < State.CurrentGen.Count) {
                 _organismObjects[i].SetActive(true);
-                _organismObjects[i].GetComponent<OrganismController>().Initialise(State.current_gen[i]);
+                _organismObjects[i].GetComponent<OrganismController>().Initialise(State.CurrentGen[i]);
             } else {
                 _organismObjects[i].SetActive(false);
             }
         }
 
-        for (int i = _organismObjects.Count; i < State.current_gen.Count; i++) {
+        for (int i = _organismObjects.Count; i < State.CurrentGen.Count; i++) {
             GameObject newOrg = Instantiate(OrganismObject, gameObject.transform);
-            newOrg.GetComponent<OrganismController>().Initialise(State.current_gen[i]);
+            newOrg.GetComponent<OrganismController>().Initialise(State.CurrentGen[i]);
             _organismObjects.Add(newOrg);
         }
     }
@@ -161,8 +161,8 @@ public class EvolutionManager : MonoBehaviour
             nextGeneration.Add(a);
             nextGeneration.Add(b);
 
-            int offspring = Mathf.CeilToInt((float)((a.Fitness + b.Fitness) * (_config.maximumOffspring - _config.minimumOffspring) / 2) +
-                                            _config.minimumOffspring);
+            int offspring = Mathf.CeilToInt((float)((a.Fitness + b.Fitness) * (_config.MaximumOffspring - _config.MinimumOffspring) / 2) +
+                                            _config.MinimumOffspring);
 
             for (int i = 0; i < offspring; i++) {
                 Organism c = Reproduce(a, b);
@@ -194,7 +194,7 @@ public class EvolutionManager : MonoBehaviour
 
         for (int i = 0; i < Organism.Attributes.Length; i++) {
             double average = (a.AttributeValues[i] + b.AttributeValues[i]) / 2;
-            attributeValues[i] = Mathf.Clamp((float)(average + RandomNormal.Random(_config.mutationStrength)), -1, 1);
+            attributeValues[i] = Mathf.Clamp((float)(average + RandomNormal.Random(_config.MutationStrength)), -1, 1);
         }
 
         return new Organism(attributeValues);
