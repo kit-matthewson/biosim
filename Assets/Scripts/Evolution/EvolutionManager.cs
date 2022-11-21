@@ -136,7 +136,7 @@ public class EvolutionManager : MonoBehaviour
                 minFit = fitness;
             }
         }
-
+        
         foreach (Organism organism in organisms) {
             double normalisedFitness = (organism.Fitness - minFit) / (maxFit - minFit);
 
@@ -179,6 +179,7 @@ public class EvolutionManager : MonoBehaviour
     private T PopRandom<T>(List<T> list) {
         T item = list[_rnd.Next(0, list.Count)];
         list.Remove(item);
+
         return item;
     }
 
@@ -189,9 +190,9 @@ public class EvolutionManager : MonoBehaviour
     /// <param name="b">Second organism</param>
     /// <returns>Offspring</returns>
     private Organism Reproduce(Organism a, Organism b) {
-        double[] attributeValues = new double[Organism.attributes.Length];
+        double[] attributeValues = new double[Organism.Attributes.Length];
 
-        for (int i = 0; i < Organism.attributes.Length; i++) {
+        for (int i = 0; i < Organism.Attributes.Length; i++) {
             double average = (a.AttributeValues[i] + b.AttributeValues[i]) / 2;
             attributeValues[i] = Mathf.Clamp((float)(average + RandomNormal.Random(_config.mutationStrength)), -1, 1);
         }

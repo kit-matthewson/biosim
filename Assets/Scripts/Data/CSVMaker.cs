@@ -24,8 +24,8 @@ public class CSVMaker : MonoBehaviour {
 
         files["Fitness"] = new FileHandler($"{root}\\Fitness.csv");
 
-        for (int i = 0; i < Organism.attributes.Length; i++) {
-            string attribute_name = Organism.attributes[i].name;
+        for (int i = 0; i < Organism.Attributes.Length; i++) {
+            string attribute_name = Organism.Attributes[i].Name;
             files[attribute_name] = new FileHandler($"{root}\\{attribute_name}.csv");
         }
 
@@ -53,7 +53,7 @@ public class CSVMaker : MonoBehaviour {
     }
 
     public void UpdateCSVs() {
-        for (int i = -1; i < Organism.attributes.Length; i++) {
+        for (int i = -1; i < Organism.Attributes.Length; i++) {
             int[] buckets = new int[(int)(2 / bucketSize)];
 
             StringBuilder line = new(buckets.Length * 2);
@@ -74,7 +74,7 @@ public class CSVMaker : MonoBehaviour {
 
             line.Append("\n");
 
-            files[i == -1 ? "Fitness" : Organism.attributes[i].name].Write(line.ToString());
+            files[i == -1 ? "Fitness" : Organism.Attributes[i].Name].Write(line.ToString());
         }
     }
 }
