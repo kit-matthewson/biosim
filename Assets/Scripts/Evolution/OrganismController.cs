@@ -1,41 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class OrganismController : MonoBehaviour {
+    public NavMeshAgent Agent;
+    public MeshRenderer Mesh;
+    public Material BaseMaterial;
+    public Gradient Gradient;
 
-    public NavMeshAgent agent;
-    public MeshRenderer mesh;
-    public Material baseMaterial;
-    public Gradient gradient;
-
+    /// <summary>
+    /// Initialise this <c>OrganismController</c> based on some <c>Organism</c>.
+    /// </summary>
+    /// <param name="organism">The <c>Organism</c> to extract values from.</param>
     public void Initialise(Organism organism) {
         SetStats(organism);
 
         gameObject.transform.SetPositionAndRotation(RandPos(), Quaternion.identity);
-        agent.SetDestination(RandPos());
+        Agent.SetDestination(RandPos());
     }
 
+    /// <summary>
+    /// Update the attributes of the <c>Organism</c> this controller is based off.
+    /// </summary>
+    /// <param name="organism">The <c>Organism</c> to extract values from.</param>
     public void SetStats(Organism organism) {
         float v = (float)((organism.Fitness + 1) / 2);
 
-        mesh.material = new(baseMaterial) {
-            color = gradient.Evaluate(v)
+        Mesh.material = new Material(BaseMaterial) {
+            color = Gradient.Evaluate(v)
         };
 
-        agent.speed = (float)((organism.AttributeValue("Agility") * organism.AttributeValue("Endurance") * 20) + 1);
+        Agent.speed = (float)(organism.AttributeValue("Agility") * organism.AttributeValue("Endurance") * 20 + 1);
     }
 
+    [PublicAPI]
     private void Update() {
         if (Random.value < 0.05) {
-            agent.SetDestination(RandPos());
+            Agent.SetDestination(RandPos());
         }
     }
 
     public Vector3 RandPos() {
-        int width = 100;
+        const int width = 100;
+
         return new Vector3(Random.Range(-width, width), 0, Random.Range(-width, width));
     }
 }
