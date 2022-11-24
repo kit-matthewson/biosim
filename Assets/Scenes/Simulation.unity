@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -535,8 +535,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2873913bd39387a40a1bd80e8c052433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
-  lookSpeed: 160
+  MoveSpeed: 0
+  LookSpeed: 0
 --- !u!114 &961739755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -627,14 +627,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1635d5916801a874ab59030886a65410, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuController: {fileID: 1653179095}
-  genProgress: {fileID: 2963113037963665421}
-  genText: {fileID: 1623555856}
-  organismObject: {fileID: 4987040012113323261, guid: aba750e2b81e8d343bdaac5e7e65eace,
+  MenuControllerHandle: {fileID: 1653179095}
+  GenProgress: {fileID: 2963113037963665421}
+  GenText: {fileID: 1623555856}
+  OrganismObject: {fileID: 4987040012113323261, guid: aba750e2b81e8d343bdaac5e7e65eace,
     type: 3}
-  gensPerStep: 1
-  genLength: 5
-  genQueueLength: 10
+  GensPerStep: 10
+  GenLength: 5
+  GenQueueLength: 10
 --- !u!4 &1480961311
 Transform:
   m_ObjectHideFlags: 0
@@ -662,8 +662,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4971436e796e63d419df220a707e09e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bucketSize: 0.1
-  writeFrequency: 5
+  BucketSize: 0.1
+  WriteFrequency: 10
 --- !u!114 &1480961313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -705,7 +705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b626a16ee2ea8546842e83e7074b8ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  evolutionConfig: {fileID: 0}
+  EvolutionConfig: {fileID: 0}
 --- !u!4 &1605447834
 Transform:
   m_ObjectHideFlags: 0
@@ -971,7 +971,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04035b31e9b3f6444b795055abfebeec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  staticObjectName: Static
+  StaticObjectName: Static
 --- !u!224 &2963113037461600724
 RectTransform:
   m_ObjectHideFlags: 0

@@ -775,7 +775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04035b31e9b3f6444b795055abfebeec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  staticObjectName: Static
+  StaticObjectName: Static
 --- !u!114 &941990444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -873,11 +873,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a68f7f26f1c392c4eb2e9e765399cc29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuController: {fileID: 941990443}
-  mutationSlider: {fileID: 1765584296}
-  mutationText: {fileID: 359588310}
-  popSizeSlider: {fileID: 5582247385983645913}
-  popSizeText: {fileID: 948188890}
+  MenuController: {fileID: 941990443}
+  MutationSlider: {fileID: 1765584296}
+  MutationText: {fileID: 359588310}
+  PopSizeSlider: {fileID: 5582247385983645913}
+  PopSizeText: {fileID: 948188890}
 --- !u!114 &948188890 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5582247385787570046, guid: 0678ff4d1adf8984ab3a53979d569a2b,
@@ -919,7 +919,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b626a16ee2ea8546842e83e7074b8ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  evolutionConfig: {fileID: 0}
+  EvolutionConfig: {fileID: 0}
 --- !u!4 &1023313679
 Transform:
   m_ObjectHideFlags: 0
