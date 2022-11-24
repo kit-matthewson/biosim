@@ -35,7 +35,7 @@ public class EvolutionManager : MonoBehaviour
 
     private float _lastGeneration;
 
-    private readonly Queue<List<Organism>> _generations = new();
+    private Queue<List<Organism>> _generations = new();
     private Thread _generationThread;
 
     private readonly Random _rnd = new();
@@ -63,9 +63,11 @@ public class EvolutionManager : MonoBehaviour
         if (Time.time - _lastGeneration >= GenLength) {
             GenText.text = State.Generation.ToString();
 
-            for (int i = 0; i < GensPerStep && _generations.Any(); i++) {
-                State.CurrentGen = _generations.Dequeue();
-                State.Generation++;
+            lock (_generations) {
+                for (int i = 0; i < GensPerStep && _generations.Any(); i++) {
+                    State.CurrentGen = _generations.Dequeue();
+                    State.Generation++;
+                }
             }
 
             GenerateGameObjects();
@@ -94,7 +96,9 @@ public class EvolutionManager : MonoBehaviour
     private void DoGenerations() {
         while (true) {
             if (_generations.Count <= GenQueueLength && _generations.Count > 0) {
-                _generations.Enqueue(GetNextGeneration(_generations.Last()));
+                lock (_generations) {
+                    _generations.Enqueue(GetNextGeneration(_generations.Last()));
+                }
             }
         }
     }

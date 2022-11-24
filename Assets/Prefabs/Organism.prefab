@@ -129,23 +129,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 936cd8c7609450d47834186394dabf4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent: {fileID: 4987040012113323260}
-  mesh: {fileID: 4987040011516263495}
-  baseMaterial: {fileID: 2100000, guid: b564535257dcdd445b27a1dfa61bb2e1, type: 2}
-  gradient:
+  Agent: {fileID: 4987040012113323260}
+  Mesh: {fileID: 4987040011516263495}
+  BaseMaterial: {fileID: 2100000, guid: b564535257dcdd445b27a1dfa61bb2e1, type: 2}
+  Gradient:
     serializedVersion: 2
-    key0: {r: 0.754717, g: 0.13171947, b: 0.13171947, a: 1}
-    key1: {r: 0.13333333, g: 0.18022186, b: 0.7254902, a: 1}
-    key2: {r: 0.13700408, g: 0.7787169, b: 0.2776099, a: 0}
-    key3: {r: 0.13725488, g: 0.81960785, b: 0.24700943, a: 0}
+    key0: {r: 1, g: 0, b: 0, a: 1}
+    key1: {r: 0, g: 1, b: 0.1731329, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 26201
-    ctime1: 32768
-    ctime2: 39321
-    ctime3: 65535
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
     ctime4: 0
     ctime5: 0
     ctime6: 0
@@ -159,7 +159,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 3
+    m_NumColorKeys: 2
     m_NumAlphaKeys: 2
 --- !u!195 &4987040012113323260
 NavMeshAgent:
