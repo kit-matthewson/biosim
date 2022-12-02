@@ -1,21 +1,19 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class NoiseGenerator : MonoBehaviour {
 
-    public float frequency;
-    public float amplitude;
+    public float Frequency;
 
-    Vector2 centre;
+    private Vector2 _centre;
 
+    [PublicAPI]
     private void Awake() {
-        centre = Random.insideUnitCircle;
+        _centre = Random.insideUnitCircle * float.MaxValue;
     }
 
     public float Evaluate(float x, float y) {
-        float v;
-
-        v = Mathf.PerlinNoise((x + centre.x) * frequency, (y + centre.y) * frequency);
-        v *= amplitude;
+        float v = Mathf.PerlinNoise((x + _centre.x) * Frequency, (y + _centre.y) * Frequency);
 
         return v;
     }
