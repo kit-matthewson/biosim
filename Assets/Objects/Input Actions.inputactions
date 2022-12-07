@@ -33,18 +33,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Next Focus",
+                    "name": "FocusToggle",
                     "type": "Button",
                     "id": "34439e5e-1509-4f5c-9a57-8410f758f9ee",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Focus",
-                    "type": "Button",
-                    "id": "5aeaa023-db5f-4749-b6c9-80a5449cfce2",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -66,22 +57,11 @@
                 {
                     "name": "",
                     "id": "66fdf2db-154f-409d-8473-492740f2fd41",
-                    "path": "<Keyboard>/tab",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Next Focus",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "8fe7c023-0727-4654-abde-6da5a8b5eb3e",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Focus",
+                    "action": "FocusToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -7,4 +7,5 @@ using UnityEngine;
 public class SimulationState : ScriptableObject {
     public int Generation;
     public List<Organism> CurrentGen;
+    public bool Paused;
 }

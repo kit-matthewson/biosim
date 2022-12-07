@@ -8,13 +8,16 @@ public class OrganismController : MonoBehaviour {
     public MeshRenderer Mesh;
     public Material BaseMaterial;
     public Gradient Gradient;
+    public SimulationState State;
 
     /// <summary>
     /// Initialise this <c>OrganismController</c> based on some <c>Organism</c>.
     /// </summary>
     /// <param name="organism">The <c>Organism</c> to extract values from.</param>
-    public void Initialise(Organism organism) {
+    public void Initialise(Organism organism, SimulationState state) {
         SetStats(organism);
+
+        State = state;
 
         gameObject.transform.SetPositionAndRotation(RandPos(), Quaternion.identity);
         Agent.SetDestination(RandPos());
@@ -36,6 +39,8 @@ public class OrganismController : MonoBehaviour {
 
     [PublicAPI]
     private void Update() {
+        Agent.isStopped = State.Paused;
+
         if (Random.value < 0.05) {
             Agent.SetDestination(RandPos());
         }

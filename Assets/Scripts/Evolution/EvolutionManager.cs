@@ -1,7 +1,7 @@
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,15 +10,13 @@ using Random = System.Random;
 /// <summary>
 ///     Runs the evolution simulation.
 /// </summary>
-public class EvolutionManager : MonoBehaviour
-{
+public class EvolutionManager : MonoBehaviour {
     public StaticMenuControllerHandle MenuControllerHandle;
 
     public SimulationState State { get; private set; }
 
     [Header("UI")]
     public Slider GenProgress;
-
     public TextMeshProUGUI GenText;
 
     // Evolution config deals with the actual evolution parameters. Simulation config only affects how this is shown.
@@ -29,13 +27,15 @@ public class EvolutionManager : MonoBehaviour
     public float GenLength = 5;
     public int GenQueueLength = 10;
 
+    [HideInInspector] public int GenerationGoal = -1;
+
     private EvolutionConfig _config;
 
     private readonly List<GameObject> _organismObjects = new();
 
     private float _lastGeneration;
 
-    private Queue<List<Organism>> _generations = new();
+    private readonly Queue<List<Organism>> _generations = new();
     private Thread _generationThread;
 
     private readonly Random _rnd = new();
@@ -53,29 +53,60 @@ public class EvolutionManager : MonoBehaviour
         InitialisePopulation();
         _lastGeneration = -GenLength;
 
-        _generations.Enqueue(State.CurrentGen);
+        lock (_generations) {
+            _generations.Enqueue(State.CurrentGen);
+        }
+
         _generationThread = new Thread(DoGenerations);
         _generationThread.Start();
     }
 
     [PublicAPI]
     private void Update() {
-        if (Time.time - _lastGeneration >= GenLength) {
-            GenText.text = State.Generation.ToString();
+        GenProgress.value = (Time.time - _lastGeneration) / GenLength;
 
-            lock (_generations) {
-                for (int i = 0; i < GensPerStep && _generations.Any(); i++) {
-                    State.CurrentGen = _generations.Dequeue();
-                    State.Generation++;
+        lock (_generations) {
+            GenText.text = $"{State.Generation} (g: {GenerationGoal}, q: {_generations.Count}/{GenQueueLength})";
+
+            if (GenerationGoal > State.Generation && _generations.Count == GenQueueLength) {
+                int n = Mathf.Min(_generations.Count, GenerationGoal - State.Generation);
+
+                Debug.Log(n);
+
+                if (n > 1) {
+                    DoGenerations(n);
                 }
             }
-
-            GenerateGameObjects();
-
-            _lastGeneration = Time.time;
         }
 
-        GenProgress.value = (Time.time - _lastGeneration) / GenLength;
+        if (State.Paused) {
+            _lastGeneration += Time.deltaTime;
+            return;
+        }
+
+        if (Time.time - _lastGeneration >= GenLength) {
+            DoGenerations(GensPerStep);
+        }
+    }
+
+    /// <summary>
+    /// Runs <c>n</c> generations and generates GameObjects.
+    /// </summary>
+    /// <param name="n">The number of generations to run</param>
+    private void DoGenerations(int n) {
+        if (n < 1) {
+            return;
+        }
+
+        lock (_generations) {
+            for (int i = 0; i < n && _generations.Any(); i++) {
+                State.CurrentGen = _generations.Dequeue();
+                State.Generation++;
+            }
+        }
+
+        _lastGeneration = Time.time;
+        GenerateGameObjects();
     }
 
     /// <summary>
@@ -83,7 +114,6 @@ public class EvolutionManager : MonoBehaviour
     /// </summary>
     private void InitialisePopulation() {
         State.CurrentGen = new List<Organism>(_config.InitialPopulationSize);
-
         for (int i = 0; i < _config.InitialPopulationSize; i++) {
             State.CurrentGen.Add(new Organism());
         }
@@ -95,10 +125,10 @@ public class EvolutionManager : MonoBehaviour
     /// </summary>
     private void DoGenerations() {
         while (true) {
-            if (_generations.Count <= GenQueueLength && _generations.Count > 0) {
-                lock (_generations) {
-                    _generations.Enqueue(GetNextGeneration(_generations.Last()));
-                }
+            lock (_generations) {
+                if (_generations.Count >= GenQueueLength || _generations.Count <= 0) continue;
+                var next = GetNextGeneration(_generations.Last());
+                _generations.Enqueue(next);
             }
         }
     }
@@ -110,7 +140,7 @@ public class EvolutionManager : MonoBehaviour
         for (int i = 0; i < _organismObjects.Count; i++) {
             if (i < State.CurrentGen.Count) {
                 _organismObjects[i].SetActive(true);
-                _organismObjects[i].GetComponent<OrganismController>().Initialise(State.CurrentGen[i]);
+                _organismObjects[i].GetComponent<OrganismController>().Initialise(State.CurrentGen[i], State);
             } else {
                 _organismObjects[i].SetActive(false);
             }
@@ -118,7 +148,7 @@ public class EvolutionManager : MonoBehaviour
 
         for (int i = _organismObjects.Count; i < State.CurrentGen.Count; i++) {
             GameObject newOrg = Instantiate(OrganismObject, gameObject.transform);
-            newOrg.GetComponent<OrganismController>().Initialise(State.CurrentGen[i]);
+            newOrg.GetComponent<OrganismController>().Initialise(State.CurrentGen[i], State);
             _organismObjects.Add(newOrg);
         }
     }
@@ -140,7 +170,7 @@ public class EvolutionManager : MonoBehaviour
                 minFit = fitness;
             }
         }
-        
+
         foreach (Organism organism in organisms) {
             double normalisedFitness = (organism.Fitness - minFit) / (maxFit - minFit);
 

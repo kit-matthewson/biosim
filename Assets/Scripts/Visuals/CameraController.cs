@@ -30,6 +30,12 @@ public class CameraController : MonoBehaviour {
             Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0); // This shouldn't be needed, but is ??
     }
 
+    public void OnFocusToggle() {
+        Cursor.visible = !Cursor.visible;
+
+        Cursor.lockState = Cursor.visible ? CursorLockMode.Confined : CursorLockMode.Locked;
+    }
+
     public void OnHorizontalMovement(InputValue input) {
         _horizontalMovement = input.Get<Vector2>();
     }
@@ -39,6 +45,8 @@ public class CameraController : MonoBehaviour {
     }
 
     public void OnLook(InputValue input) {
-        _mouseDelta = input.Get<Vector2>();
+        if (Cursor.lockState == CursorLockMode.Locked) {
+            _mouseDelta = input.Get<Vector2>();
+        }
     }
 }
