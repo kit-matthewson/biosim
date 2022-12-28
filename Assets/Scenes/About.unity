@@ -368,6 +368,11 @@ MonoBehaviour:
     from red to green based on it''s fitness.  Use the controls to view graphs showing
     data on the organisms and their attributes, or adjust the speed of the simulation.
 
+
+    During
+    the simulation, press ''Q'' to unlock the mouse so that you can interact with
+    buttons.
+
 '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

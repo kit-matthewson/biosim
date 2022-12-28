@@ -66,12 +66,10 @@ public class EvolutionManager : MonoBehaviour {
         GenProgress.value = (Time.time - _lastGeneration) / GenLength;
 
         lock (_generations) {
-            GenText.text = $"{State.Generation} (g: {GenerationGoal}, q: {_generations.Count}/{GenQueueLength})";
+            GenText.text = $"Gen. {State.Generation}";
 
             if (GenerationGoal > State.Generation && _generations.Count == GenQueueLength) {
                 int n = Mathf.Min(_generations.Count, GenerationGoal - State.Generation);
-
-                Debug.Log(n);
 
                 if (n > 1) {
                     DoGenerations(n);
@@ -100,6 +98,7 @@ public class EvolutionManager : MonoBehaviour {
 
         lock (_generations) {
             for (int i = 0; i < n && _generations.Any(); i++) {
+                State.PreviousGen = State.CurrentGen; // Is this a reference?
                 State.CurrentGen = _generations.Dequeue();
                 State.Generation++;
             }
@@ -126,8 +125,11 @@ public class EvolutionManager : MonoBehaviour {
     private void DoGenerations() {
         while (true) {
             lock (_generations) {
-                if (_generations.Count >= GenQueueLength || _generations.Count <= 0) continue;
-                var next = GetNextGeneration(_generations.Last());
+                if (_generations.Count >= GenQueueLength) continue;
+
+                var prev = _generations.Count == 0 ? State.PreviousGen : _generations.Last();
+
+                var next = GetNextGeneration(prev);
                 _generations.Enqueue(next);
             }
         }
