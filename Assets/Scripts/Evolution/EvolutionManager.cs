@@ -65,9 +65,9 @@ public class EvolutionManager : MonoBehaviour {
     private void Update() {
         GenProgress.value = (Time.time - _lastGeneration) / GenLength;
 
-        lock (_generations) {
-            GenText.text = $"Gen. {State.Generation}";
+        GenText.text = $"Gen. {State.Generation}";
 
+        lock (_generations) {
             if (GenerationGoal > State.Generation && _generations.Count == GenQueueLength) {
                 int n = Mathf.Min(_generations.Count, GenerationGoal - State.Generation);
 

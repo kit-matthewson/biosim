@@ -10,7 +10,7 @@ public class CsvMaker : MonoBehaviour {
     public float BucketSize;
     public int WriteFrequency;
 
-    private readonly Dictionary<string, FileHandler> _files = new();
+    public readonly Dictionary<string, FileHandler> Files = new();
     private SimulationState _state;
 
     private int _lastWrite = -1;
@@ -23,11 +23,11 @@ public class CsvMaker : MonoBehaviour {
 
         _state = gameObject.GetComponent<EvolutionManager>().State;
 
-        _files["Fitness"] = new FileHandler($"{Root}\\Fitness.csv");
+        Files["Fitness"] = new FileHandler($"{Root}\\Fitness.csv");
 
         for (int i = 0; i < Organism.Attributes.Length; i++) {
             string attributeName = Organism.Attributes[i].Name;
-            _files[attributeName] = new FileHandler($"{Root}\\{attributeName}.csv");
+            Files[attributeName] = new FileHandler($"{Root}\\{attributeName}.csv");
         }
 
         StringBuilder headerRow = new("gen,");
@@ -42,14 +42,14 @@ public class CsvMaker : MonoBehaviour {
 
         headerRow.Append("\n");
 
-        foreach (string key in _files.Keys) {
-            _files[key].Write(headerRow.ToString());
+        foreach (string key in Files.Keys) {
+            Files[key].Write(headerRow.ToString());
         }
     }
 
     [PublicAPI]
     private void Update() {
-        if (_state.Generation == _lastWrite || _state.Generation % WriteFrequency != 0) return;
+        if (_state.Generation < _lastWrite + WriteFrequency) return;
 
         UpdateCsvs();
         _lastWrite = _state.Generation;
@@ -78,7 +78,7 @@ public class CsvMaker : MonoBehaviour {
 
             line.Append("\n");
 
-            _files[i == -1 ? "Fitness" : Organism.Attributes[i].Name].Write(line.ToString());
+            Files[i == -1 ? "Fitness" : Organism.Attributes[i].Name].Write(line.ToString());
         }
     }
 }

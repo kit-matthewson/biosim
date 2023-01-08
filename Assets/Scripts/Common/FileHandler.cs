@@ -17,12 +17,6 @@ public class FileHandler {
         FileName = split[0];
         FileName = split[1];
 
-        // int i = 0;
-        // while (File.Exists(filePath)) {
-        //     filePath = $"{fileName}{i}.{fileType}";
-        //     i++;
-        // }
-
         File.Create(FilePath).Close();
     }
 
@@ -39,5 +33,24 @@ public class FileHandler {
 
         fs.Write(data, 0, data.Length);
         fs.Close();
+    }
+
+    public string[] ReadLines() {
+        using FileStream fs = new(FilePath, FileMode.Open, FileAccess.Read);
+        byte[] bytes = new byte[fs.Length];
+        
+        int remaining = (int)fs.Length;
+        int read = 0;
+
+        while (remaining > 0) {
+            int n = fs.Read(bytes, read, remaining);
+            
+            read += n;
+            remaining -= n;
+        }
+
+        string file = _encoder.GetString(bytes);
+
+        return file.Split("\n");
     }
 }
