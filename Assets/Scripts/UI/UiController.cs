@@ -53,6 +53,9 @@ public class UiController : MonoBehaviour {
         DrawGraph();
     }
 
+    /// <summary>
+    /// Generates a graph from the selected dropdowns.
+    /// </summary>
     public void DrawGraph() {
         string typeDropdown = GraphTypeDropdown.options[GraphTypeDropdown.value].text;
         string timeDropdown = GraphTimeDropdown.options[GraphTimeDropdown.value].text;
@@ -147,10 +150,14 @@ public class UiController : MonoBehaviour {
         }
     }
 
-    private void Histogram(string[] contents) {
+    private void Histogram(string[] contents) { }
 
-    }
-
+    /// <summary>
+    /// Maps a value from then range [<c>min</c>:<c>max</c>] to [0:1]
+    /// </summary>
+    /// <param name="v">Value to map.</param>
+    /// <param name="min">Minimum input value.</param>
+    /// <param name="max">Maximum input value.</param>
     private static float Map(float v, float min, float max) {
         return (v - min) / (max - min);
     }
